@@ -1,0 +1,248 @@
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  width: 100vw;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.app {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.app-expanded {
+  max-width: 30%;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+.country {
+  border: 8px solid #333;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 30px 0;
+  position: relative;
+  flex: 1;
+}
+
+.search-bar {
+  width: 50%;
+  height: 3rem;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  margin: 1rem 0;
+  text-align: center;
+  font-size: 25px;
+}
+
+.search-bar::placeholder {
+  text-align: center;
+}
+
+.country-name-container {
+  text-align: center;
+  position: relative;
+}
+
+.country-name-container::before,
+.country-name-container::after {
+  content: '';
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  visibility: hidden;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.country-container {
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 50px;
+}
+
+.flag img {
+  margin-bottom: 25px;
+  margin-top: 25px;
+  width: 500px;
+}
+
+hr.rounded-top {
+  border-top: 8px solid #bbb;
+  border-color: rgba(121, 121, 121, 0.65);
+  border-radius: 5px;
+  margin-top: 30px;
+  width: 500px;
+}
+
+hr.rounded-bottom,
+hr.rounded-country {
+  border-top: 8px solid #bbb;
+  border-color: rgba(121, 121, 121, 0.65);
+  border-radius: 5px;
+  margin-top: 5px;
+  margin-bottom: 25px;
+  width: 500px;
+}
+
+hr.rounded-title {
+  border-top: 8px solid #bbb;
+  border-color: rgba(121, 121, 121, 0.65);
+  border-radius: 5px;
+  margin-top: 5px;
+  margin-bottom: 25px;
+  width: 500px;
+}
+
+.info-label {
+  font-weight: bold;
+  text-align: left;
+  display: inline-block;
+  width: 175px;
+  margin: 5px 25px 5px 75px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+}
+
+.info-value {
+  display: inline-block;
+  margin: 0;
+  word-wrap: break-word;
+}
+
+button {
+  cursor: pointer;
+  font-size: 1.2rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  background: #333;
+  outline: none;
+  padding: 0.5rem 1.8rem;
+  box-shadow: 0 0.3rem rgba(121, 121, 121, 0.65);
+  margin: 25px;
+}
+
+button:hover {
+  filter: brightness(150%);
+}
+
+button:active {
+  transform: translate(0, 0.3rem);
+  box-shadow: 0 0.1rem rgba(255, 255, 255, 0.65);
+}
+
+.btn-container {
+  margin-bottom: 15px;
+}
+
+.heart-icon {
+  color: #e51515;
+  position: relative;
+  top: -4px;
+  font-size: 30px;
+}
+
+.fav-btn-card-small {
+  padding: 0.5rem;
+  position: absolute;
+  right: 0;
+  top: 15%;
+}
+
+.details-title {
+  position: relative;
+}
+
+.fav-btn-card-details {
+  padding: 0.5rem;
+  position: absolute;
+  right: -2.5%;
+  top: -80%;
+}
+
+.fav-btn-card-small .heart-icon.regularHeart:hover + .tooltip::after,
+.fav-btn-card-details .heart-icon.regularHeart:hover + .tooltip::after {
+  content: 'Add';
+}
+
+.fav-btn-card-small .heart-icon.solidHeart:hover + .tooltip::after,
+.fav-btn-card-details .heart-icon.solidHeart:hover + .tooltip::after {
+  content: 'Remove';
+}
+
+.tooltip {
+  position: absolute;
+  top: -2rem;
+  right: 50%;
+  transform: translateX(50%);
+  padding: 0.5rem;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 0.8rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0s linear 0.2s;
+}
+
+.fav-btn-card-small:hover .heart-icon.regularHeart:hover + .tooltip,
+.fav-btn-card-small:hover .heart-icon.solidHeart:hover + .tooltip,
+.fav-btn-card-details:hover .heart-icon.regularHeart:hover + .tooltip,
+.fav-btn-card-details:hover .heart-icon.solidHeart:hover + .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* media query */
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
