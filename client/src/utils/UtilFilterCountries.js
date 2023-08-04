@@ -1,5 +1,4 @@
 function UtilFilterCountries(countries, searchValue) {
-  console.log('countries:', countries);
   const filteredCountries = countries.filter(
     (country) =>
       country &&

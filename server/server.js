@@ -40,19 +40,6 @@ app.get('/welcome', (req, res) => {
   res.send('Welcome to the server!');
 });
 
-// app.post('/favorites', (req, res) => {
-//   const country = req.body.country;
-//   const population = req.body.population;
-
-//   if (favorites.includes(country)) {
-//     favorites = favorites.filter((fav) => fav !== country);
-//   } else {
-//     favorites.push(country);
-//   }
-
-//   res.sendStatus(200);
-// });
-
 app.post('/favorites', async (req, res) => {
   const { country, population } = req.body;
 
@@ -76,16 +63,6 @@ app.post('/favorites', async (req, res) => {
   }
 });
 
-// app.get('/favorites', (req, res) => {
-//   Favorite.find({}, (err, favorites) => {
-//     if (err) {
-//       res.status(500).send(err);
-//     } else {
-//       res.status(200).json(favorites);
-//     }
-//   });
-// });
-
 app.get('/favorites', async (req, res) => {
   try {
     const favorites = await Favorite.find({});
@@ -95,16 +72,39 @@ app.get('/favorites', async (req, res) => {
   }
 });
 
-app.delete('/favorites', async (req, res) => {
-  const { country } = req.body;
+app.get('/favorites/highestPopulation', (req, res) => {
+  Favorite.find()
+    .sort({ population: -1 }) // sort by population in descending order
+    .limit(1) // get only one document
+    .then((result) => {
+      console.log('Result server:', result);
+      res.send(result);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({ error: 'An error occurred' });
+    });
+});
+
+app.delete('/favorites/all', async (req, res) => {
+  try {
+    await Favorite.deleteMany({});
+    res.status(200).send('All favorites deleted.');
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+app.delete('/favorites/:id', async (req, res) => {
+  const { id } = req.params;
 
   try {
-    const existingCountry = await Favorite.findOne({ country });
+    const existingCountry = await Favorite.findById(id);
 
     if (!existingCountry) {
       res.status(400).json({ message: 'Country not found in favorites.' });
     } else {
-      await Favorite.deleteOne({ country });
+      await Favorite.deleteOne({ _id: id });
       res.status(200).json({ message: 'Country removed from favorites.' });
     }
   } catch (err) {

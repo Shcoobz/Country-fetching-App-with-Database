@@ -15,7 +15,7 @@ function CardCountryDetails({ country, favorites, handleAddRemoveFavToggle }) {
   const isFavorite = checkIfFavorite();
 
   function checkIfFavorite() {
-    return favorites.some((fav) => fav.name.common === country.name.common);
+    return favorites.some((fav) => fav.country === country.name.common);
   }
 
   return (

@@ -9,9 +9,6 @@ function CardCountrySmall({
   onCountrySelect,
 }) {
   function checkIfFavorite() {
-    // return favorites.some((fav) => fav.name.common === country.name.common);
-    // return favorites.some((fav) => fav.country === country.name.common);
-    // return favorites.some((fav) => fav.country === country?.name?.common);
     return favorites.some(
       (fav) =>
         fav.country === (country.name ? country.name.common : country.country)
@@ -19,9 +16,11 @@ function CardCountrySmall({
   }
 
   const isFavorite = checkIfFavorite();
+  const isHighestPopulation = country.isHighestPopulation;
 
   return (
-    <div className='country'>
+    <div
+      className={`country ${isHighestPopulation ? 'highest-population' : ''}`}>
       <div className='country-name-container'>
         <h2 className='country-name'>
           {country.name ? country.name.common : country.country}

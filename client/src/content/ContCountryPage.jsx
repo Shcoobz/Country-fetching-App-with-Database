@@ -20,8 +20,6 @@ function ContCountryPage({
 }) {
   const filteredCountries = filterCountries(countries, searchValue);
 
-  console.log('filteredCountries:', filteredCountries.length);
-
   return (
     <div>
       <ComTitle text='Countries:' />

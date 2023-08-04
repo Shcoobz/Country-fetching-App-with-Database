@@ -1,3 +1,6 @@
+// TODO: fix weird bug: favorites > highest pop > learn more = page blank, error msg // also seemingly randomly getting error when clicking on learn more
+// TODO: favorites > learn more not working
+
 import { useState, useEffect } from 'react';
 import './App.css';
 
@@ -8,6 +11,7 @@ import ContFavoritesPage from './content/ContFavoritesPage';
 import UtilFilterCountries from './utils/UtilFilterCountries';
 import UtilFetchCountries from './utils/UtilFetchCountries';
 import UtilSortData from './utils/UtilSortData';
+import UtilSortFavorites from './utils/UtilSortFavorites';
 
 function App() {
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -34,29 +38,29 @@ function App() {
     fetch('http://localhost:5000/favorites')
       .then((response) => response.json())
       .then((fetchedFavorites) => {
-        console.log(fetchedFavorites);
-        setFavorites(fetchedFavorites);
+        const sortedFavorites = UtilSortFavorites(
+          fetchedFavorites,
+          countrySortOrder
+        );
+        setFavorites(sortedFavorites);
       })
       .catch((error) => console.error('An error occurred:', error));
   }, [countrySortOrder]);
 
-  // sorts favorites
-  // useEffect(() => {
-  //   setFavorites((prevFavorites) =>
-  //     UtilSortData(prevFavorites, countrySortOrder)
-  //   );
-  // }, [countrySortOrder]);
-
-  // fetches favorites
-  // useEffect(() => {
-  //   fetch('http://localhost:5000/favorites')
-  //     .then((response) => response.json())
-  //     .then((fetchedFavorites) => {
-  //       console.log(fetchedFavorites);
-  //       setFavorites(fetchedFavorites);
-  //     })
-  //     .catch((error) => console.error('An error occurred:', error));
-  // }, []);
+  function fetchHighestPopulation() {
+    fetch('http://localhost:5000/favorites/highestPopulation')
+      .then((response) => response.json())
+      .then((highestPopulationCountry) => {
+        if (highestPopulationCountry.length > 0) {
+          setFavorites([
+            { ...highestPopulationCountry[0], isHighestPopulation: true },
+          ]);
+        } else {
+          console.log('No countries found');
+        }
+      })
+      .catch((error) => console.error('An error occurred:', error));
+  }
 
   // handling events
   function onCountrySelect(country) {
@@ -78,15 +82,15 @@ function App() {
     setShowFavorites(false);
     setFavoriteSearchValue('');
     setSearchValue('');
-    // setCountrySortOrder('asc');
-    setCountrySortOrder((prevSortOrder) => prevSortOrder);
+    setCountrySortOrder('asc');
+    // setCountrySortOrder((prevSortOrder) => prevSortOrder);
   }
 
   function onFavoritesBtnClick() {
     setShowFavorites(true);
     setIsExpanded(false);
-    // setCountrySortOrder('asc');
-    setCountrySortOrder((prevSortOrder) => prevSortOrder);
+    setCountrySortOrder('asc');
+    // setCountrySortOrder((prevSortOrder) => prevSortOrder);
   }
 
   function onAddFavClick(country) {
@@ -102,38 +106,32 @@ function App() {
     })
       .then((response) => response.json())
       .then((newFavCountry) => {
-        setFavorites((prevFavorites) => [...prevFavorites, newFavCountry]);
+        setFavorites((prevState) => [...prevState, newFavCountry]);
       })
-      .catch((error) => console.error('An error occurred:', error));
+      .catch((error) => {
+        console.error('Error adding favorite', error);
+      });
   }
 
   function onRemoveFavClick(country) {
-    // setFavorites((prevFavorites) => {
-    //   const updatedFavorites = prevFavorites.filter(
-    //     (fav) => fav.name.common !== country.name.common
-    //   );
+    const countryToRemove = favorites.find((fav) => fav.country === country);
 
-    //   return UtilSortData(updatedFavorites);
-    // });
+    if (!countryToRemove || !countryToRemove._id) {
+      console.error('Country ID not found', countryToRemove);
+      return;
+    }
 
-    fetch('http://localhost:5000/favorites', {
+    fetch(`http://localhost:5000/favorites/${countryToRemove._id}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        country: country.name.common,
-      }),
     })
       .then(() => {
-        setFavorites((prevFavorites) => {
-          const updatedFavorites = prevFavorites.filter(
-            (fav) => fav.country !== country.name.common
-          );
-          return updatedFavorites;
-        });
+        setFavorites((prevState) =>
+          prevState.filter((fav) => fav._id !== countryToRemove._id)
+        );
       })
-      .catch((error) => console.error('An error occurred:', error));
+      .catch((error) => {
+        console.error('Error removing favorite', error);
+      });
   }
 
   function onFavoritesSearchInput(e) {
@@ -141,69 +139,37 @@ function App() {
   }
 
   function onRemoveAllFavorites() {
-    setFavorites([]);
+    fetch('http://localhost:5000/favorites/all', {
+      method: 'DELETE',
+    })
+      .then(() => {
+        setFavorites([]);
+      })
+      .catch((error) => {
+        console.error('Error removing all favorites', error);
+      });
   }
 
   // toggle
   function handleAddRemoveFavToggle(country) {
-    if (
-      favorites.some((fav) => {
-        return fav && fav.name && fav.name.common === country.name.common;
+    fetch('http://localhost:5000/favorites')
+      .then((response) => response.json())
+      .then((favorites) => {
+        const isFavorite = favorites.some(
+          (fav) => fav.country === country.name.common
+        );
+        if (isFavorite) {
+          onRemoveFavClick(country.name.common);
+        } else {
+          onAddFavClick(country);
+        }
       })
-    ) {
-      onRemoveFavClick(country);
-    } else {
-      onAddFavClick(country);
-    }
+      .catch((error) => {
+        console.error('Error getting favorites', error);
+      });
   }
 
   // rendering
-  // function renderCountriesPage() {
-  //   if (showFavorites) {
-  //     return (
-  //       <ContFavoritesPage
-  //         countrySortOrder={countrySortOrder}
-  //         onCountrySort={onCountrySort}
-  //         onBackBtnClick={onBackBtnClick}
-  //         favoriteSearchValue={favoriteSearchValue}
-  //         onFavoritesSearchInput={onFavoritesSearchInput}
-  //         handleAddRemoveFavToggle={handleAddRemoveFavToggle}
-  //         onRemoveAllFavorites={onRemoveAllFavorites}
-  //         favorites={favorites}
-  //         onCountrySelect={onCountrySelect}
-  //       />
-  //     );
-  //   }
-
-  //   if (selectedCountry) {
-  //     return (
-  //       <ContCountryDetailsPage
-  //         onFavoritesBtnClick={onFavoritesBtnClick}
-  //         onBackBtnClick={onBackBtnClick}
-  //         selectedCountry={selectedCountry}
-  //         favorites={favorites}
-  //         handleAddRemoveFavToggle={handleAddRemoveFavToggle}
-  //       />
-  //     );
-  //   }
-
-  //   return (
-  //     <ContCountryPage
-  //       searchValue={searchValue}
-  //       setSearchValue={setSearchValue}
-  //       countrySortOrder={countrySortOrder}
-  //       onCountrySort={onCountrySort}
-  //       onFavoritesBtnClick={onFavoritesBtnClick}
-  //       countries={countries}
-  //       favorites={favorites}
-  //       handleAddRemoveFavToggle={handleAddRemoveFavToggle}
-  //       onRemoveAllFavorites={onRemoveAllFavorites}
-  //       onCountrySelect={onCountrySelect}
-  //       filterCountries={UtilFilterCountries}
-  //     />
-  //   );
-  // }
-
   function renderCountriesPage() {
     if (showFavorites) {
       return (
@@ -217,6 +183,7 @@ function App() {
           onRemoveAllFavorites={onRemoveAllFavorites}
           favorites={favorites}
           onCountrySelect={onCountrySelect}
+          fetchHighestPopulation={fetchHighestPopulation}
         />
       );
     }
@@ -233,7 +200,6 @@ function App() {
       );
     }
 
-    // Only render ContCountryPage when none of the other conditions are met
     return (
       <ContCountryPage
         searchValue={searchValue}

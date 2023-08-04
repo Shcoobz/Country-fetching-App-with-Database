@@ -1,5 +1,5 @@
 import CardCountrySmall from './CardCountrySmall';
-import UtilFilterCountries from '../utils/UtilFilterCountries';
+import UtilFilterFavorites from '../utils/UtilFilterFavorites';
 
 function CardFavoritePage({
   favorites,
@@ -21,7 +21,7 @@ function CardFavoritePage({
 
   function renderFavoriteCountryCards() {
     const updatedFavorites = updateCountryObjectsWithFavorites();
-    const filteredFavorites = UtilFilterCountries(
+    const filteredFavorites = UtilFilterFavorites(
       updatedFavorites,
       favoriteSearchValue
     );
@@ -33,6 +33,7 @@ function CardFavoritePage({
         favorites={updatedFavorites}
         handleAddRemoveFavToggle={handleAddRemoveFavToggle}
         onCountrySelect={() => onCountrySelect(country)}
+        className={country.isHighestPopulation ? 'highest-population' : ''}
       />
     ));
   }

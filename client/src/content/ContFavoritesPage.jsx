@@ -15,6 +15,7 @@ function ContFavoritesPage({
   onRemoveAllFavorites,
   favorites,
   onCountrySelect,
+  fetchHighestPopulation,
 }) {
   return (
     <div>
@@ -42,6 +43,8 @@ function ContFavoritesPage({
           favorites={favorites}
           onRemoveAllFavorites={onRemoveAllFavorites}
         />
+
+        <ComBtn text='Highest Population' onClick={fetchHighestPopulation} />
 
         <ComBtn text='Back' onClick={onBackBtnClick} className='back-btn' />
       </div>
