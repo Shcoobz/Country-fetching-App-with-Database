@@ -1,5 +1,4 @@
-// TODO: fix weird bug: favorites > highest pop > learn more = page blank, error msg // also seemingly randomly getting error when clicking on learn more
-// TODO: favorites > learn more not working
+// TODO: CardCountryDetails check with country name && fetch on btn click details for fav country from api
 
 import { useState, useEffect } from 'react';
 import './App.css';
