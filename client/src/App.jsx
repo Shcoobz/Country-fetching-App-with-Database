@@ -62,6 +62,7 @@ function App() {
   }
 
   // handling events
+  // TODO: add fetching of data here for chosen country
   function onCountrySelect(country) {
     setSelectedCountry(country);
     setSearchValue('');

@@ -8,7 +8,7 @@ function CardCountrySmall({
   handleAddRemoveFavToggle,
   onCountrySelect,
 }) {
-  
+
   function checkIfFavorite() {
     return favorites.some(
       (fav) =>

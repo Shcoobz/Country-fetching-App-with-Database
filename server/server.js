@@ -7,7 +7,7 @@ const app = express();
 const port = 5000;
 const CLIENT_URL = 'http://localhost:5173';
 const MONGO_DB_URL =
-  'mongodb+srv://shcoobz:4Bx7EPAmFb09ICjd@cluster0.eqlz9c4.mongodb.net/fetchcountries';
+  'mongodb+srv://shcoobz:Zjtd3N89YHY4Xk9p@cluster0.fm2y2ig.mongodb.net/fetch-the-countries';
 
 // mongoose.connect(MONGO_DB_URL);
 
