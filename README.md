@@ -1,4 +1,4 @@
-# Country-fetching-App-with-Database
+# Country fetching App with Database
 
 ![Project Image](/client/src/img/fetch-the-countries.png)
 
