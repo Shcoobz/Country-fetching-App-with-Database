@@ -2,22 +2,63 @@ import mongoose from 'mongoose';
 import express from 'express';
 import Favorite from './model/Favorite.js';
 import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
 
+dotenv.config();
+
+/**
+ * Express application
+ * @type {express.Express}
+ */
 const app = express();
+
+/**
+ * Port number for the server
+ * @type {number}
+ */
 const port = 5000;
+
+/**
+ * URL of the client application
+ * @type {string}
+ */
 const CLIENT_URL = 'http://localhost:5173';
-const MONGO_DB_URL =
-  'mongodb+srv://shcoobz:Zjtd3N89YHY4Xk9p@cluster0.fm2y2ig.mongodb.net/fetch-the-countries';
 
-// mongoose.connect(MONGO_DB_URL);
+/**
+ * MongoDB URL obtained from environment variable
+ * @type {string}
+ */
+const MONGO_DB_URL = process.env.MONGO_DB_URL;
 
+/**
+ * Establishes a connection to the MongoDB database using the specified URL.
+ * @function
+ * @async
+ * @param {string} MONGO_DB_URL - The MongoDB database URL to connect to.
+ * @returns {Promise<void>} A Promise that resolves when the connection is established successfully, or rejects with an error if the connection fails.
+ * @throws {Error} If the MongoDB connection encounters an error, it will be caught and logged.
+ */
 mongoose
   .connect(MONGO_DB_URL)
   .then(() => console.log('Successfully connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
 
+/**
+ * Configures Express middleware to parse incoming requests with JSON payloads.
+ * @function
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+ */
 app.use(bodyParser.json());
 
+/**
+ * Configures Express middleware for handling Cross-Origin Resource Sharing (CORS).
+ * @function
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @param {Function} next - The next middleware function in the request-response cycle.
+ */
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', CLIENT_URL);
   res.header(
@@ -32,14 +73,41 @@ app.use(function (req, res, next) {
   next();
 });
 
+/**
+ * Route to the root of the server
+ * @name GET /
+ * @function
+ * @memberof module:server
+ * @param {Express.Request} req - Express request object.
+ * @param {Express.Response} res - Express response object.
+ * @returns {void}
+ */
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+/**
+ * Route to a welcome message
+ * @name GET /welcome
+ * @function
+ * @memberof module:server
+ * @param {Express.Request} req - Express request object.
+ * @param {Express.Response} res - Express response object.
+ * @returns {void}
+ */
 app.get('/welcome', (req, res) => {
   res.send('Welcome to the server!');
 });
 
+/**
+ * Route to add a favorite country
+ * @name POST /favorites
+ * @function
+ * @memberof module:server
+ * @param {Express.Request} req - Express request object.
+ * @param {Express.Response} res - Express response object.
+ * @returns {void}
+ */
 app.post('/favorites', async (req, res) => {
   const { country, population } = req.body;
 
@@ -63,6 +131,15 @@ app.post('/favorites', async (req, res) => {
   }
 });
 
+/**
+ * Route to get all favorite countries
+ * @name GET /favorites
+ * @function
+ * @memberof module:server
+ * @param {Express.Request} req - Express request object.
+ * @param {Express.Response} res - Express response object.
+ * @returns {void}
+ */
 app.get('/favorites', async (req, res) => {
   try {
     const favorites = await Favorite.find({});
@@ -72,6 +149,15 @@ app.get('/favorites', async (req, res) => {
   }
 });
 
+/**
+ * Route to get the country with the highest population
+ * @name GET /favorites/highestPopulation
+ * @function
+ * @memberof module:server
+ * @param {Express.Request} req - Express request object.
+ * @param {Express.Response} res - Express response object.
+ * @returns {void}
+ */
 app.get('/favorites/highestPopulation', (req, res) => {
   Favorite.find()
     .sort({ population: -1 }) // sort by population in descending order
@@ -86,6 +172,15 @@ app.get('/favorites/highestPopulation', (req, res) => {
     });
 });
 
+/**
+ * Route to delete all favorite countries
+ * @name DELETE /favorites/all
+ * @function
+ * @memberof module:server
+ * @param {Express.Request} req - Express request object.
+ * @param {Express.Response} res - Express response object.
+ * @returns {void}
+ */
 app.delete('/favorites/all', async (req, res) => {
   try {
     await Favorite.deleteMany({});
@@ -95,6 +190,15 @@ app.delete('/favorites/all', async (req, res) => {
   }
 });
 
+/**
+ * Route to delete a favorite country by ID
+ * @name DELETE /favorites/:id
+ * @function
+ * @memberof module:server
+ * @param {Express.Request} req - Express request object.
+ * @param {Express.Response} res - Express response object.
+ * @returns {void}
+ */
 app.delete('/favorites/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -112,6 +216,10 @@ app.delete('/favorites/:id', async (req, res) => {
   }
 });
 
+/**
+ * Start the server and listen on the specified port
+ * @memberof module:server
+ */
 app.listen(port, () => {
   console.log(`Server at http://localhost:${port}`);
 });

@@ -12,6 +12,13 @@ import UtilFetchCountries from './utils/UtilFetchCountries';
 import UtilSortData from './utils/UtilSortData';
 import UtilSortFavorites from './utils/UtilSortFavorites';
 
+/**
+ * Main application component for [Project Name].
+ *
+ * @function App
+ *
+ * @returns {JSX.Element} The main application component.
+ */
 function App() {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countrySortOrder, setCountrySortOrder] = useState('asc');
@@ -22,6 +29,11 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [favoriteSearchValue, setFavoriteSearchValue] = useState('');
 
+  /**
+   * CSS class name based on whether the country details are expanded or not.
+   *
+   * @constant {string}
+   */
   const checkIfOnCountryDetails = isExpanded ? 'app-expanded' : 'app';
 
   // fetches and sorts countries
@@ -32,28 +44,38 @@ function App() {
       setCountries(sortedCountries);
     }
 
+    /**
+     * Fetches and sorts the list of countries from an external API.
+     *
+     * @async
+     * @function getCountries
+     *
+     * @throws {Error} Throws an error if there is an issue fetching the data.
+     */
     getCountries();
 
     fetch('http://localhost:5000/favorites')
       .then((response) => response.json())
       .then((fetchedFavorites) => {
-        const sortedFavorites = UtilSortFavorites(
-          fetchedFavorites,
-          countrySortOrder
-        );
+        const sortedFavorites = UtilSortFavorites(fetchedFavorites, countrySortOrder);
         setFavorites(sortedFavorites);
       })
       .catch((error) => console.error('An error occurred:', error));
   }, [countrySortOrder]);
 
+  /**
+   * Fetches the country with the highest population from the API.
+   *
+   * @function fetchHighestPopulation
+   *
+   * @throws {Error} Throws an error if there is an issue fetching the data.
+   */
   function fetchHighestPopulation() {
     fetch('http://localhost:5000/favorites/highestPopulation')
       .then((response) => response.json())
       .then((highestPopulationCountry) => {
         if (highestPopulationCountry.length > 0) {
-          setFavorites([
-            { ...highestPopulationCountry[0], isHighestPopulation: true },
-          ]);
+          setFavorites([{ ...highestPopulationCountry[0], isHighestPopulation: true }]);
         } else {
           console.log('No countries found');
         }
@@ -61,8 +83,13 @@ function App() {
       .catch((error) => console.error('An error occurred:', error));
   }
 
-  // handling events
-  // TODO: add fetching of data here for chosen country
+  /**
+   * Handles the selection of a country and updates the state accordingly.
+   *
+   * @function onCountrySelect
+   *
+   * @param {Object} country - The selected country object.
+   */
   function onCountrySelect(country) {
     setSelectedCountry(country);
     setSearchValue('');
@@ -70,12 +97,20 @@ function App() {
     setShowFavorites(false);
   }
 
+  /**
+   * Toggles the sort order of the country list between ascending and descending.
+   *
+   * @function onCountrySort
+   */
   function onCountrySort() {
-    setCountrySortOrder((prevSortOrder) =>
-      prevSortOrder === 'asc' ? 'desc' : 'asc'
-    );
+    setCountrySortOrder((prevSortOrder) => (prevSortOrder === 'asc' ? 'desc' : 'asc'));
   }
 
+  /**
+   * Handles the click event when the back button is clicked.
+   *
+   * @function onBackBtnClick
+   */
   function onBackBtnClick() {
     setSelectedCountry(null);
     setIsExpanded(false);
@@ -83,16 +118,26 @@ function App() {
     setFavoriteSearchValue('');
     setSearchValue('');
     setCountrySortOrder('asc');
-    // setCountrySortOrder((prevSortOrder) => prevSortOrder);
   }
 
+  /**
+   * Handles the click event when the "Favorites" button is clicked.
+   *
+   * @function onFavoritesBtnClick
+   */
   function onFavoritesBtnClick() {
     setShowFavorites(true);
     setIsExpanded(false);
     setCountrySortOrder('asc');
-    // setCountrySortOrder((prevSortOrder) => prevSortOrder);
   }
 
+  /**
+   * Handles the click event to add a country to favorites.
+   *
+   * @function onAddFavClick
+   *
+   * @param {Object} country - The country to be added to favorites.
+   */
   function onAddFavClick(country) {
     fetch('http://localhost:5000/favorites', {
       method: 'POST',
@@ -113,6 +158,13 @@ function App() {
       });
   }
 
+  /**
+   * Handles the click event to remove a country from favorites.
+   *
+   * @function onRemoveFavClick
+   *
+   * @param {string} country - The name of the country to be removed from favorites.
+   */
   function onRemoveFavClick(country) {
     const countryToRemove = favorites.find((fav) => fav.country === country);
 
@@ -134,10 +186,22 @@ function App() {
       });
   }
 
+  /**
+   * Handles the input change event when searching for favorites.
+   *
+   * @function onFavoritesSearchInput
+   *
+   * @param {Object} e - The input change event object.
+   */
   function onFavoritesSearchInput(e) {
     setFavoriteSearchValue(e.target.value);
   }
 
+  /**
+   * Handles the click event to remove all favorite countries.
+   *
+   * @function onRemoveAllFavorites
+   */
   function onRemoveAllFavorites() {
     fetch('http://localhost:5000/favorites/all', {
       method: 'DELETE',
@@ -150,14 +214,18 @@ function App() {
       });
   }
 
-  // toggle
+  /**
+   * Toggles the addition or removal of a country from favorites.
+   *
+   * @function handleAddRemoveFavToggle
+   *
+   * @param {Object} country - The country object to toggle.
+   */
   function handleAddRemoveFavToggle(country) {
     fetch('http://localhost:5000/favorites')
       .then((response) => response.json())
       .then((favorites) => {
-        const isFavorite = favorites.some(
-          (fav) => fav.country === country.name.common
-        );
+        const isFavorite = favorites.some((fav) => fav.country === country.name.common);
         if (isFavorite) {
           onRemoveFavClick(country.name.common);
         } else {
@@ -169,7 +237,13 @@ function App() {
       });
   }
 
-  // rendering
+  /**
+   * Renders the appropriate content based on the application state.
+   *
+   * @function renderCountriesPage
+   *
+   * @returns {JSX.Element} The rendered content based on the application state.
+   */
   function renderCountriesPage() {
     if (showFavorites) {
       return (

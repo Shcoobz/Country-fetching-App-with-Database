@@ -1,3 +1,10 @@
+/**
+ * Represents a utility function for sorting an array of favorite countries in ascending or descending order.
+ * @function UtilSortFavorites
+ * @param {Array} data - An array of favorite country data to be sorted.
+ * @param {string} sortOrder - The sort order, either 'asc' (ascending) or 'desc' (descending).
+ * @returns {Array} An array of sorted favorite country data.
+ */
 function UtilSortFavorites(data, sortOrder) {
   return [...data].sort((a, b) => {
     const nameA = a.country.toUpperCase();
