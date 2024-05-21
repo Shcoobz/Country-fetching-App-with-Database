@@ -1,6 +1,6 @@
 # Country fetching App with Database
 
-![Project Image](/client/src/img/fetch-the-countries.png)
+![Project Image](/client/src/img/advancedJS_country-fetching-app-with-database.png)
 
 ## Summary
 
